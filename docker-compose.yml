@@ -1,31 +1,13 @@
-version: "3.9"
+version: "3.9" # Adjust the version if needed
 
 services:
-  postgres:
-    image: postgres:13.2
-    environment:
-      POSTGRES_DB: app
-      POSTGRES_USER: app
-      POSTGRES_PASSWORD: app
-    networks:
-      - local-keycloak
-
-  keycloak:
-    image: jboss/keycloak:13.0.0
-    environment:
-      DB_VENDOR: postgres
-      DB_ADDR: postgres
-      DB_DATABASE: app
-      DB_USER: app
-      DB_PASSWORD: app
+  keycloak_unoptimized:
+    image: quay.io/keycloak/keycloak:latest
     ports:
-      - "28080:8080"
-    depends_on:
-      - postgres
-    networks:
-      - local-keycloak
+      - "8008:8080"
+    environment:
+      KEYCLOAK_ADMIN: main
+      KEYCLOAK_ADMIN_PASSWORD: main
     # volumes:
-    #   - ./keycloak:/app
-
-networks:
-  local-keycloak:
+    #   - /keycloak:/opt/keycloak/data/import
+    command: start-dev --import-realm
