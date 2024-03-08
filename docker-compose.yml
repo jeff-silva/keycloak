@@ -1,7 +1,15 @@
-version: "3.9" # Adjust the version if needed
+version: "3.9"
+
+networks:
+  sail:
+    # driver: bridge
+
+volumes:
+  mysql_data: {}
+  sail-mysql:
 
 services:
-  keycloak_unoptimized:
+  keycloak:
     image: quay.io/keycloak/keycloak:latest
     ports:
       - "8008:8080"
@@ -11,3 +19,24 @@ services:
     # volumes:
     #   - /keycloak:/opt/keycloak/data/import
     command: start-dev --import-realm
+
+  backend:
+    build: ./backend/.docker
+    env_file: ./backend/.env
+    volumes:
+      - "./backend:/app"
+    # ports:
+    #   - "${BACKEND_PORT:-8000}:8000"
+    networks:
+      - sail
+
+  # frontend:
+  #   image: node:20.11.1
+  #   working_dir: /app
+  #   env_file: ./frontend/.env
+  #   command: bash -c "yarn install && yarn dev"
+  #   ports:
+  #     - 24678:24678
+  #     - 3000:3000
+  #   volumes:
+  #     - "./frontend:/app"
